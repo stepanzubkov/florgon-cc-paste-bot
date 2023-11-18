@@ -1,7 +1,6 @@
 import asyncio
 import logging
 import sys
-import re
 import json
 
 from aiogram import Bot, Dispatcher, types, F
@@ -10,6 +9,7 @@ from aiogram.filters import CommandStart, Command, ExceptionTypeFilter
 
 import config
 from services.paste import extract_hash_from_paste_short_url
+from exceptions import BotErrorException
 
 dp = Dispatcher()
 
@@ -38,6 +38,11 @@ async def echo_handler(message: types.Message) -> None:
 @dp.error(ExceptionTypeFilter(json.decoder.JSONDecodeError), F.update.message.as_("message"))
 async def handle_json_exception(_: types.ErrorEvent, message: types.Message) -> None:
     await message.answer("Ошибка запроса! Свяжитесь с администрацией бота или повторите попытку.")
+
+
+@dp.error(ExceptionTypeFilter(BotErrorException), F.update.message.as_("message"))
+async def handle_bot_error(event: types.ErrorEvent, message: types.Message) -> None:
+    await message.answer(event.exception.message)
 
 
 async def main() -> None:
