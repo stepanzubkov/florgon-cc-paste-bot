@@ -53,7 +53,7 @@ async def execute_api_method(
     """
     request_url = f"{get_api_host()}/{api_method}"
     async with httpx.AsyncClient() as client:
-        response = client.request(
+        response = await client.request(
             http_method,
             request_url,
             json=data,
@@ -61,7 +61,7 @@ async def execute_api_method(
             headers={"Authorization": access_token} if access_token else {},
         )
 
-    return await response
+    return response
 
 
 def get_api_host() -> str:
