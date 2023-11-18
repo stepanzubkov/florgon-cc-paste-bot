@@ -29,7 +29,7 @@ async def echo_handler(message: types.Message) -> None:
     """
     Takes url to paste and send paste text as a message.
     """
-    paste_hash = extract_hash_from_paste_short_url()
+    paste_hash = extract_hash_from_paste_short_url(message.text)
     if paste_hash is None:
         message.reply(f"Ссылка должна быть в формате {config.URL_PASTE_OPEN_PROVIDER}/xxxxxx!")
         return
