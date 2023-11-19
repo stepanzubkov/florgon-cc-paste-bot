@@ -26,7 +26,7 @@ from aiogram.filters import CommandStart, Command, ExceptionTypeFilter
 from aiogram.utils.formatting import Text, Pre
 
 import config
-from services.paste import extract_hash_from_paste_short_url, get_paste_info_by_hash
+from services.paste import extract_hash_from_paste_short_url, format_timedelta, get_paste_info_by_hash, expires_at_to_timedelta, format_timedelta
 from exceptions import BotErrorException
 
 dp = Dispatcher()
@@ -50,10 +50,16 @@ async def command_read_paste(message: types.Message) -> None:
     paste_hash = extract_hash_from_paste_short_url(message.text)
     success, response = await get_paste_info_by_hash(paste_hash)
     if not success:
-        message.reply(response["message"])
+        await message.reply("Произошла ошибка: " + response["message"])
         return
 
-    content = Text(Pre(response["text"], language=response["language"]))
+    if response["is_expired"]:
+        await message.reply("Срок действия пасты истёк!")
+        return
+
+    expires_timedelta = expires_at_to_timedelta(response["expires_at"])
+    content = Text(f"Срок действия пасты истечёт через {format_timedelta(expires_timedelta)}",
+                    Pre(response["text"], language=response["language"]))
     await message.reply(**content.as_kwargs())
 
 

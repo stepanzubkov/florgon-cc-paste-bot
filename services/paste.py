@@ -18,6 +18,8 @@
 
 import re
 from typing import Literal, NoReturn
+from datetime import timedelta
+import time
 
 import config
 from exceptions import BotErrorException
@@ -59,3 +61,30 @@ def extract_hash_from_paste_short_url(short_url: str) -> str | NoReturn:
         )
 
     return short_url_hashes[0]
+
+
+def expires_at_to_timedelta(expires_at: int) -> timedelta:
+    """
+    Converts expires_at to timedelta.
+    :param int expires_at: timestamp
+    :return: timedelta
+    :rtype: timedelta
+    """
+    return timedelta(seconds=expires_at-time.time())
+
+
+def format_timedelta(td: timedelta) -> str:
+    """
+    Formats timedelta object to human readable view.
+    :param timedelta td: timedelta object
+    :return: timedelta as string
+    :rtype: str
+    """
+    if td.days % 10 == 1:
+        days_plural = "день"
+    elif td.days % 10 in (2, 3, 4) and td.days % 100 not in [12, 13, 14]:
+        days_plural = "дня"
+    else:
+        days_plural = "дней"
+
+    return f"{td.days} {days_plural}"
