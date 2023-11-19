@@ -27,7 +27,9 @@ from services.api import execute_json_api_method
 from models import Error, Paste
 
 
-async def get_paste_info_by_hash(hash: str) -> tuple[Literal[True], Paste] | tuple[Literal[False], Error]:
+async def get_paste_info_by_hash(
+    hash: str,
+) -> tuple[Literal[True], Paste] | tuple[Literal[False], Error]:
     """
     Returns info about paste short url by hash.
     :param str hash: short url hash
@@ -38,9 +40,9 @@ async def get_paste_info_by_hash(hash: str) -> tuple[Literal[True], Paste] | tup
     """
     response = await execute_json_api_method("GET", f"pastes/{hash}/")
     if "success" in response:
-        response["success"]["paste"]["text"] = response["success"]["paste"]["text"].replace(
-            "\\n", "\n"
-        )
+        response["success"]["paste"]["text"] = response["success"]["paste"][
+            "text"
+        ].replace("\\n", "\n")
         return True, response["success"]["paste"]
     return False, response["error"]
 
@@ -70,7 +72,7 @@ def expires_at_to_timedelta(expires_at: int) -> timedelta:
     :return: timedelta
     :rtype: timedelta
     """
-    return timedelta(seconds=expires_at-time.time())
+    return timedelta(seconds=expires_at - time.time())
 
 
 def format_timedelta(td: timedelta) -> str:

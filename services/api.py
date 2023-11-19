@@ -90,7 +90,9 @@ def get_api_host() -> str:
     return config.CC_API_URL
 
 
-def try_decode_response_to_json(response: httpx.Response) -> Union[Dict[str, Any], NoReturn]:
+def try_decode_response_to_json(
+    response: httpx.Response,
+) -> Union[Dict[str, Any], NoReturn]:
     """
     Tries to decode response to json.
     :param requests.Response response: response object
@@ -98,4 +100,3 @@ def try_decode_response_to_json(response: httpx.Response) -> Union[Dict[str, Any
     :rtype: Union[Dict[str, Any], NoReturn]
     """
     return response.json()
-

@@ -26,7 +26,13 @@ from aiogram.filters import CommandStart, Command, ExceptionTypeFilter
 from aiogram.utils.formatting import Text, Pre
 
 import config
-from services.paste import extract_hash_from_paste_short_url, format_timedelta, get_paste_info_by_hash, expires_at_to_timedelta, format_timedelta
+from services.paste import (
+    extract_hash_from_paste_short_url,
+    format_timedelta,
+    get_paste_info_by_hash,
+    expires_at_to_timedelta,
+    format_timedelta,
+)
 from exceptions import BotErrorException
 
 dp = Dispatcher()
@@ -37,9 +43,11 @@ async def command_start_handler(message: types.Message) -> None:
     """
     This handler receives messages with `/start` command
     """
-    await message.answer(f"Привет, я помогу тебе работать с пастами в Florgon CC.\n"
-                         f"Пасты позволяют сохранить любой текст (например код) и позволяют "
-                         f"передавать его. Для кода в пастах существует подсветка синтаксиса.")
+    await message.answer(
+        f"Привет, я помогу тебе работать с пастами в Florgon CC.\n"
+        f"Пасты позволяют сохранить любой текст (например код) и позволяют "
+        f"передавать его. Для кода в пастах существует подсветка синтаксиса."
+    )
 
 
 @dp.message(Command("read"))
@@ -58,14 +66,20 @@ async def command_read_paste(message: types.Message) -> None:
         return
 
     expires_timedelta = expires_at_to_timedelta(response["expires_at"])
-    content = Text(f"Срок действия пасты истечёт через {format_timedelta(expires_timedelta)}",
-                    Pre(response["text"], language=response["language"]))
+    content = Text(
+        f"Срок действия пасты истечёт через {format_timedelta(expires_timedelta)}",
+        Pre(response["text"], language=response["language"]),
+    )
     await message.reply(**content.as_kwargs())
 
 
-@dp.error(ExceptionTypeFilter(json.decoder.JSONDecodeError), F.update.message.as_("message"))
+@dp.error(
+    ExceptionTypeFilter(json.decoder.JSONDecodeError), F.update.message.as_("message")
+)
 async def handle_json_exception(_: types.ErrorEvent, message: types.Message) -> None:
-    await message.reply("Ошибка запроса! Свяжитесь с администрацией бота или повторите попытку.")
+    await message.reply(
+        "Ошибка запроса! Свяжитесь с администрацией бота или повторите попытку."
+    )
 
 
 @dp.error(ExceptionTypeFilter(BotErrorException), F.update.message.as_("message"))
