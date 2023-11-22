@@ -32,6 +32,9 @@ from services.paste import (
     get_paste_info_by_hash,
     expires_at_to_timedelta,
     format_timedelta,
+    extract_paste_language_and_text_from_message,
+    get_url_for_paste,
+    create_paste,
 )
 from exceptions import BotErrorException
 
@@ -71,6 +74,20 @@ async def command_read_paste(message: types.Message) -> None:
         Pre(response["text"], language=response["language"]),
     )
     await message.reply(**content.as_kwargs())
+
+
+@dp.message(Command("paste"))
+async def command_create_paste(message: types.Message) -> None:
+    language, text = extract_paste_language_and_text_from_message(message.html_text)
+    success, response = await create_paste(
+        text=text,
+        language=language,
+    )
+    if not success:
+        await message.reply("Произошла ошибка: ", response["message"])
+        return
+
+    await message.reply(f"Готово! {get_url_for_paste(response['hash'])}")
 
 
 @dp.error(

@@ -47,6 +47,17 @@ async def get_paste_info_by_hash(
     return False, response["error"]
 
 
+async def create_paste(
+    text: str, language: str,
+) -> tuple[Literal[True], Paste] | tuple[Literal[False], Error]:
+    response = await execute_json_api_method("POST", "pastes/", data={
+        "text": text, "language": language,
+    })
+    if "success" in response:
+        return True, response["success"]["paste"]
+    return False, response["error"]
+
+
 def extract_hash_from_paste_short_url(short_url: str) -> str | NoReturn:
     """
     Extracts hash from paste short url.
@@ -63,6 +74,23 @@ def extract_hash_from_paste_short_url(short_url: str) -> str | NoReturn:
         )
 
     return short_url_hashes[0]
+
+
+def extract_paste_language_and_text_from_message(message: str) -> tuple[str, str]:
+    text = re.findall(
+        "<pre>(.*)</pre>", message, re.DOTALL
+    )
+    if not text:
+        raise BotErrorException(
+            "Сообщение должно содержать блок текста, заключённый в обратные ковычки."
+        )
+    text = text[0]
+    result = re.findall(
+        r'<code class="language-(\w+)">(.*)</code>', text, re.DOTALL
+    )
+    if not result:
+        return "plain", text
+    return result[0]
 
 
 def expires_at_to_timedelta(expires_at: int) -> timedelta:
@@ -90,3 +118,7 @@ def format_timedelta(td: timedelta) -> str:
         days_plural = "дней"
 
     return f"{td.days} {days_plural}"
+
+
+def get_url_for_paste(hash: str) -> str:
+    return f"{config.URL_PASTE_OPEN_PROVIDER}/{hash}"
