@@ -36,7 +36,7 @@ from services.paste import (
     get_url_for_paste,
     create_paste,
 )
-from exceptions import BotErrorException, ServiceErrorException
+from exceptions import ServiceErrorException
 
 dp = Dispatcher()
 

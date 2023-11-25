@@ -22,7 +22,7 @@ from datetime import timedelta
 import time
 
 import config
-from exceptions import BotErrorException, CodeBlockNotFound, HashNotFoundException
+from exceptions import CodeBlockNotFoundException, HashNotFoundException
 from services.api import execute_json_api_method
 from models import Error, Paste
 
