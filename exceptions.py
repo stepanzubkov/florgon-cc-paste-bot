@@ -19,9 +19,9 @@
 from typing import Self
 
 
-class BotErrorException(Exception):
+class ServiceErrorException(Exception):
     """
-    This exception class represents error in the bot,
+    This exception class represents error in the service,
     message should be answered to user.
     """
 
@@ -30,3 +30,11 @@ class BotErrorException(Exception):
     def __init__(self: Self, message: str = DEFAULT_MESSAGE) -> None:
         super().__init__()
         self.message = message
+
+
+class HashNotFoundException(ServiceErrorException):
+    pass
+
+
+class CodeBlockNotFoundException(ServiceErrorException):
+    pass

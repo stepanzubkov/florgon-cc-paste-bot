@@ -36,7 +36,7 @@ from services.paste import (
     get_url_for_paste,
     create_paste,
 )
-from exceptions import BotErrorException
+from exceptions import BotErrorException, ServiceErrorException
 
 dp = Dispatcher()
 
@@ -99,7 +99,7 @@ async def handle_json_exception(_: types.ErrorEvent, message: types.Message) -> 
     )
 
 
-@dp.error(ExceptionTypeFilter(BotErrorException), F.update.message.as_("message"))
+@dp.error(ExceptionTypeFilter(ServiceErrorException), F.update.message.as_("message"))
 async def handle_bot_error(event: types.ErrorEvent, message: types.Message) -> None:
     await message.reply(event.exception.message)
 

@@ -22,7 +22,7 @@ from datetime import timedelta
 import time
 
 import config
-from exceptions import BotErrorException
+from exceptions import BotErrorException, CodeBlockNotFound, HashNotFoundException
 from services.api import execute_json_api_method
 from models import Error, Paste
 
@@ -69,7 +69,7 @@ def extract_hash_from_paste_short_url(short_url: str) -> str | NoReturn:
         f"{config.URL_PASTE_OPEN_PROVIDER}" + r"/([a-zA-Z0-9]{6})", short_url
     )
     if not short_url_hashes:
-        raise BotErrorException(
+        raise HashNotFoundException(
             f"Ссылка должна быть в формате {config.URL_PASTE_OPEN_PROVIDER}/xxxxxx!",
         )
 
@@ -81,7 +81,7 @@ def extract_paste_language_and_text_from_message(message: str) -> tuple[str, str
         "<pre>(.*)</pre>", message, re.DOTALL
     )
     if not text:
-        raise BotErrorException(
+        raise CodeBlockNotFoundException(
             "Сообщение должно содержать блок текста, заключённый в обратные ковычки."
         )
     text = text[0]
