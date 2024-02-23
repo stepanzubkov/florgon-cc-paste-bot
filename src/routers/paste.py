@@ -1,5 +1,5 @@
 """
-    Main executable file.
+    Paste router (contains bot commands related to paste)
     Copyright (C) 2023 Stepan Zubkov <stepanzubkov@florgon.com>
 
     This program is free software: you can redistribute it and/or modify
@@ -15,17 +15,11 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
-import asyncio
-import logging
-import sys
-import json
 
-from aiogram import Bot, Dispatcher, types, F
-from aiogram.enums import ParseMode
-from aiogram.filters import CommandStart, Command, ExceptionTypeFilter
+from aiogram import Router, types
+from aiogram.filters import Command
 from aiogram.utils.formatting import Text, Pre
 
-import config
 from services.paste import (
     extract_hash_from_paste_short_url,
     format_timedelta,
@@ -36,24 +30,11 @@ from services.paste import (
     get_url_for_paste,
     create_paste,
 )
-from exceptions import BotErrorException, ServiceErrorException
 
-dp = Dispatcher()
-
-
-@dp.message(CommandStart())
-async def command_start_handler(message: types.Message) -> None:
-    """
-    This handler receives messages with `/start` command
-    """
-    await message.answer(
-        f"Привет, я помогу тебе работать с пастами в Florgon CC.\n"
-        f"Пасты позволяют сохранить любой текст (например код) и позволяют "
-        f"передавать его. Для кода в пастах существует подсветка синтаксиса."
-    )
+router = Router(name=__name__)
 
 
-@dp.message(Command("read"))
+@router.message(Command("read"))
 async def command_read_paste(message: types.Message) -> None:
     """
     Takes url to paste and send paste text as a message.
@@ -76,7 +57,7 @@ async def command_read_paste(message: types.Message) -> None:
     await message.reply(**content.as_kwargs())
 
 
-@dp.message(Command("paste"))
+@router.message(Command("paste"))
 async def command_create_paste(message: types.Message) -> None:
     language, text = extract_paste_language_and_text_from_message(message.html_text)
     success, response = await create_paste(
@@ -90,25 +71,3 @@ async def command_create_paste(message: types.Message) -> None:
     await message.reply(f"Готово! {get_url_for_paste(response['hash'])}")
 
 
-@dp.error(
-    ExceptionTypeFilter(json.decoder.JSONDecodeError), F.update.message.as_("message")
-)
-async def handle_json_exception(_: types.ErrorEvent, message: types.Message) -> None:
-    await message.reply(
-        "Ошибка запроса! Свяжитесь с администрацией бота или повторите попытку."
-    )
-
-
-@dp.error(ExceptionTypeFilter(ServiceErrorException), F.update.message.as_("message"))
-async def handle_bot_error(event: types.ErrorEvent, message: types.Message) -> None:
-    await message.reply(event.exception.message)
-
-
-async def main() -> None:
-    bot = Bot(config.BOT_TOKEN, parse_mode=ParseMode.HTML)
-    await dp.start_polling(bot)
-
-
-if __name__ == "__main__":
-    logging.basicConfig(level=logging.INFO, stream=sys.stdout)
-    asyncio.run(main())
