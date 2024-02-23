@@ -17,6 +17,7 @@
 """
 
 import re
+import html
 from typing import Literal, NoReturn
 from datetime import timedelta
 import time
@@ -89,8 +90,8 @@ def extract_paste_language_and_text_from_message(message: str) -> tuple[str, str
         r'<code class="language-(\w+)">(.*)</code>', text, re.DOTALL
     )
     if not result:
-        return "plain", text
-    return result[0]
+        return "plain", html.unescape(text)
+    return html.unescape(result[0])
 
 
 def expires_at_to_timedelta(expires_at: int) -> timedelta:

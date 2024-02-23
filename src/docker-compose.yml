@@ -2,14 +2,10 @@ version: "3"
 
 services:
   server:
-      networks:
-        - florgon-pastes-bot
+      network_mode: "host"
       restart: always
       env_file:
         - ./config.env
       volumes:
         - ./:/srv
       build: .
-
-networks:
-  florgon-pastes-bot:
