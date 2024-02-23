@@ -1,0 +1,16 @@
+[tool.poetry]
+name = "florgon-pastes-bot"
+version = "0.1.0"
+description = "Florgon CC API Pastes telegram bot"
+authors = ["Stepan Zubkov <stepanzubkov@florgon.com>"]
+license = "AGPLv3-or-later"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+aiogram = "^3.4.1"
+httpx = "^0.27.0"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
