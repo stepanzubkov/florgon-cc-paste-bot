@@ -70,4 +70,3 @@ async def command_create_paste(message: types.Message) -> None:
 
     await message.reply(f"Готово! {get_url_for_paste(response['hash'])}")
 
-
