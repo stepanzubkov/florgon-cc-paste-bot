@@ -18,6 +18,5 @@
 import os
 
 BOT_TOKEN = os.getenv("BOT_TOKEN", "")
-CC_API_TOKEN = os.getenv("CC_API_TOKEN", "")
 URL_PASTE_OPEN_PROVIDER = "https://cc.florgon.com/p"
 CC_API_URL = os.getenv("CC_API_URL", "")
