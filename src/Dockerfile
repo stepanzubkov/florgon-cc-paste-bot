@@ -8,13 +8,16 @@ ENV PYTHONUNBUFFERED=1
 # Project directory on the container.
 WORKDIR /srv
 
+# Copy file for requirements
+COPY pyproject.toml /srv
+
 # Install requirements.
-COPY requirements.txt /srv/
 RUN pip install --upgrade pip && \
-    pip install --upgrade --no-cache-dir -r requirements.txt
+    pip install poetry && \
+    poetry install --no-ansi --no-interaction
 
 # Copy whole project to the container.
 COPY . /srv/
 
 # Run project after building.
-CMD ["python", "main.py"]
+CMD ["poetry", "run", "python", "main.py"]

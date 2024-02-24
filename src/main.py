@@ -24,7 +24,7 @@ from aiogram import Bot, Dispatcher, types, F
 from aiogram.enums import ParseMode
 from aiogram.filters import CommandStart, ExceptionTypeFilter
 
-import config
+from config import settings
 from routers import routers
 from exceptions import ServiceErrorException
 
@@ -38,9 +38,9 @@ async def command_start_handler(message: types.Message) -> None:
     This handler receives messages with `/start` command
     """
     await message.answer(
-        f"Привет, я помогу тебе работать с пастами в Florgon CC.\n"
-        f"Пасты позволяют сохранить любой текст (например код) и позволяют "
-        f"передавать его. Для кода в пастах существует подсветка синтаксиса."
+        "Привет, я помогу тебе работать с пастами в Florgon CC.\n"
+        "Пасты позволяют сохранить любой текст (например код) и позволяют "
+        "передавать его. Для кода в пастах существует подсветка синтаксиса."
     )
 
 
@@ -59,7 +59,7 @@ async def handle_bot_error(event: types.ErrorEvent, message: types.Message) -> N
 
 
 async def main() -> None:
-    bot = Bot(config.BOT_TOKEN, parse_mode=ParseMode.HTML)
+    bot = Bot(settings.bot_token, parse_mode=ParseMode.HTML)
     await dp.start_polling(bot)
 
 

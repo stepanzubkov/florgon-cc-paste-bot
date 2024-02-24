@@ -22,7 +22,7 @@ from typing import Literal, NoReturn
 from datetime import timedelta
 import time
 
-import config
+from config import settings
 from exceptions import CodeBlockNotFoundException, HashNotFoundException
 from services.api import execute_json_api_method
 from models import Error, Paste
@@ -67,11 +67,11 @@ def extract_hash_from_paste_short_url(short_url: str) -> str | NoReturn:
     :return: paste hash or None if invalid short_url
     """
     short_url_hashes = re.findall(
-        f"{config.URL_PASTE_OPEN_PROVIDER}" + r"/([a-zA-Z0-9]{6})", short_url
+        f"{settings.url_paste_open_provider}" + r"/([a-zA-Z0-9]{6})", short_url
     )
     if not short_url_hashes:
         raise HashNotFoundException(
-            f"Ссылка должна быть в формате {config.URL_PASTE_OPEN_PROVIDER}/xxxxxx!",
+            f"Ссылка должна быть в формате {settings.url_paste_open_provider}/xxxxxx!",
         )
 
     return short_url_hashes[0]
@@ -122,4 +122,4 @@ def format_timedelta(td: timedelta) -> str:
 
 
 def get_url_for_paste(hash: str) -> str:
-    return f"{config.URL_PASTE_OPEN_PROVIDER}/{hash}"
+    return f"{settings.url_paste_open_provider}/{hash}"

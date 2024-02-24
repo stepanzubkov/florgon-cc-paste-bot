@@ -19,7 +19,7 @@ from typing import Dict, Union, NoReturn, Optional, Any
 
 import httpx
 
-import config
+from config import settings
 
 
 async def execute_json_api_method(
@@ -87,7 +87,7 @@ def get_api_host() -> str:
     :rtype: str
     :return: API host
     """
-    return config.CC_API_URL
+    return settings.cc_api_url
 
 
 def try_decode_response_to_json(

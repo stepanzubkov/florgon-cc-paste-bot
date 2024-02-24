@@ -15,8 +15,18 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
-import os
 
-BOT_TOKEN = os.getenv("BOT_TOKEN", "")
-URL_PASTE_OPEN_PROVIDER = "https://cc.florgon.com/p"
-CC_API_URL = os.getenv("CC_API_URL", "")
+from pydantic import Field
+from pydantic_settings import BaseSettings
+
+
+class Settings(BaseSettings):
+    """
+    Settings class for bot.
+    """
+    bot_token: str = Field()
+    url_paste_open_provider: str = "https://cc.florgon.com/p"
+    cc_api_url: str = "https://api-cc.florgon.com/v1"
+
+
+settings = Settings()
