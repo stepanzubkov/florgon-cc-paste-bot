@@ -52,7 +52,7 @@ async def create_paste(
     text: str, language: str,
 ) -> tuple[Literal[True], Paste] | tuple[Literal[False], Error]:
     response = await execute_json_api_method("POST", "pastes/", data={
-        "text": text, "language": language,
+        "text": text, "language": language, "stats_is_public": True,
     })
     if "success" in response:
         return True, response["success"]["paste"]
