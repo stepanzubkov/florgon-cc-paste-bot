@@ -59,6 +59,23 @@ async def create_paste(
     return False, response["error"]
 
 
+async def get_paste_stats_by_hash(
+    hash: str
+) -> tuple[Literal[True], Paste] | tuple[Literal[False], Error]:
+    """
+    Returns stats about paste short url by hash.
+    :param str hash: short url hash
+    :return: Tuple with two elements.
+             First is a response status (True if successfully).
+             Seconds is a response body.
+    :rtype: Tuple[True, Paste] if request is successfully, else Tuple[True, Error]
+    """
+    response = await execute_json_api_method("GET", f"pastes/{hash}/stats")
+    if "success" in response:
+        return True, response["success"]
+    return False, response["error"]
+
+
 def extract_hash_from_paste_short_url(short_url: str) -> str | NoReturn:
     """
     Extracts hash from paste short url.

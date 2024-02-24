@@ -18,7 +18,7 @@
 
 from aiogram import Router, types
 from aiogram.filters import Command
-from aiogram.utils.formatting import Text, Pre
+from aiogram.utils.formatting import Text, Pre, Bold, as_marked_section, as_list
 
 from services.paste import (
     extract_hash_from_paste_short_url,
@@ -27,6 +27,7 @@ from services.paste import (
     expires_at_to_timedelta,
     format_timedelta,
     extract_paste_language_and_text_from_message,
+    get_paste_stats_by_hash,
     get_url_for_paste,
     create_paste,
 )
@@ -69,4 +70,27 @@ async def command_create_paste(message: types.Message) -> None:
         return
 
     await message.reply(f"Готово! {get_url_for_paste(response['hash'])}")
+
+
+@router.message(Command("stats"))
+async def command_get_stats(message: types.Message) -> None:
+    paste_hash = extract_hash_from_paste_short_url(message.text)
+    success, response = await get_paste_stats_by_hash(paste_hash)
+    if not success:
+        await message.reply("Произошла ошибка: " + response["message"])
+        return
+
+    content = as_list(
+        Bold(f"Всего просмотров: {response['views']['total']}\n"),
+        as_marked_section(
+            Bold("Просмотров по реферерам:"),
+            *[f"{referer} - {value}%" for referer, value in response["views"]["by_referers"].items()],
+        ),
+        as_marked_section(
+            Bold("Просмотров по датам:"),
+            *[f"{date} - {value}%" for date, value in response["views"]["by_dates"].items()],
+        )
+    )
+
+    await message.reply(**content.as_kwargs())
 
