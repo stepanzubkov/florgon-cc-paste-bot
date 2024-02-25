@@ -25,7 +25,7 @@ import time
 from config import settings
 from exceptions import CodeBlockNotFoundException, HashNotFoundException
 from services.api import execute_json_api_method
-from models import Error, Paste
+from models import Error, Paste, Stats
 
 
 async def get_paste_info_by_hash(
@@ -61,7 +61,7 @@ async def create_paste(
 
 async def get_paste_stats_by_hash(
     hash: str
-) -> tuple[Literal[True], Paste] | tuple[Literal[False], Error]:
+) -> tuple[Literal[True], Stats] | tuple[Literal[False], Error]:
     """
     Returns stats about paste short url by hash.
     :param str hash: short url hash
